@@ -15,7 +15,7 @@ app.use('/js', express.static(path.join(__dirname, '/node_modules/jquery/dist'))
 app.set('views', './src/views');
 app.set('view engine', 'pug');
 app.get('/', (req, res) => {
-  res.render('index');
+  res.render('index', { list: ['a', 'b'] });
 });
 
 app.listen(port, () => {
