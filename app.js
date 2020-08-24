@@ -3,9 +3,19 @@ const chalk = require('chalk');
 const debug = require('debug')('app');
 const morgan = require('morgan');
 const path = require('path');
+const sql = require('mssql');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+const config = {
+  user: 'pslibrary',
+  password: 'Exultux4lu44y',
+  server: 'pslibrary1234.database.windows.net', // You can use 'localhost\\instance' to connect to named instance
+  database: 'PSLibrary',
+};
+
+sql.connect(config).catch((err) => debug(err));
 
 app.use(morgan('tiny'));
 app.use(express.static(path.join(__dirname, '/public/')));
