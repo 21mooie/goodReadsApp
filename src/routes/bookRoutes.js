@@ -1,19 +1,32 @@
 const express = require('express');
 const sql = require('mssql');
+const { MongoClient } = require('mongodb');
+const debug = require('debug')('app:bookRoutes');
 
 const bookRouter = express.Router();
 
 function router(nav) {
   bookRouter.route('/').get((req, res) => {
-    (async function query() {
-      const request = new sql.Request();
-      const { recordset } = await request.query('select * from books');
-      res.render('books',
-        {
-          nav,
-          title: 'Library',
-          books: recordset
-        });
+    const url = 'mongodb://localhost:27017';
+    const dbName = 'libraryApp';
+    (async function mongo() {
+      let client;
+      try {
+        client = await MongoClient.connect(url);
+        debug('Connected correctly to server');
+        const db = client.db(dbName);
+        const collection = await db.collection('books');
+        const books = await collection.find().toArray();
+        res.render('books',
+          {
+            nav,
+            title: 'Library',
+            books
+          });
+      } catch (err) {
+        debug(err.stack);
+      }
+      client.close();
     }());
   });
 
