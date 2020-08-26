@@ -7,12 +7,14 @@ const books = [
   {
     title: 'War and Peace',
     author: 'Lev Nikolayevich Tolstoy',
-    id: 1
+    id: 1,
+    bookId: 656,
   },
   {
     title: 'Les Misérables',
     author: 'Victor Hugo',
-    id: 2
+    id: 2,
+    bookId: 24280,
   },
   {
     title: 'The Time Machine',
@@ -51,6 +53,20 @@ function router(nav) {
       const url = 'mongodb://localhost:27017';
       const dbName = 'libraryApp';
       res.send('inserting books');
+      (async function addUser() {
+        let client;
+        try {
+          client = await MongoClient.connect(url);
+          debug('Connected to server');
+          const db = client.db(dbName);
+          const col = db.collection('books');
+          const results = await col.insertMany(books);
+          debug(results);
+        } catch (err) {
+          debug(err.stack);
+        }
+        client.close();
+      }());
     });
   return adminRouter;
 }
